@@ -1,2 +1,2 @@
 # snp01
-snp-01 - myname
+snp-01 - Adon 
