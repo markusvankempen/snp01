@@ -1,0 +1,203 @@
+[
+    {
+        "id": "52488605.fa6",
+        "type": "ibmiot out",
+        "z": "c18c7fe2.7cb75",
+        "authentication": "boundService",
+        "apiKey": "",
+        "outputType": "cmd",
+        "deviceId": "playbulb01",
+        "deviceType": "playbulb",
+        "eventCommandType": "setColor",
+        "format": "json",
+        "data": "msg.payload",
+        "qos": 0,
+        "name": "toPiCandle",
+        "service": "registered",
+        "x": 890,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "32b9d27d.ec0776",
+        "type": "function",
+        "z": "c18c7fe2.7cb75",
+        "name": "CheckAndSet",
+        "func": "var r=0;\nvar g=0;\nvar b=0;\n\nif (msg.observation.temp <=10)\n       b=255; \n\n\nif (msg.observation.temp >=20)\n       r=255; \n       \nif (msg.observation.temp >10 && msg.observation.temp <20 )\n{\n   r=255;\n   g=140;\n    \n}       \n       \n       \nvar newmsg = {\"cmd\" : \"setcolor\",\n\"mode\":\"\",\n\"speed\":\"\",\n\"rr\" : r,\n\"gg\" : g,\n\"bb\" : b\n    \n}\n\n\n\nmsg.payload=newmsg ;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 620,
+        "y": 240,
+        "wires": [
+            [
+                "52488605.fa6",
+                "25bca456.c59284"
+            ]
+        ]
+    },
+    {
+        "id": "fed89aee.f773b8",
+        "type": "function",
+        "z": "c18c7fe2.7cb75",
+        "name": "Set to10",
+        "func": "msg.observation={}\nmsg.observation.temp = 10\nmsg.payload = 10;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 220,
+        "y": 220,
+        "wires": [
+            [
+                "32b9d27d.ec0776"
+            ]
+        ]
+    },
+    {
+        "id": "8c1f21ab.3c7db8",
+        "type": "inject",
+        "z": "c18c7fe2.7cb75",
+        "name": "Cold",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 90,
+        "y": 220,
+        "wires": [
+            [
+                "fed89aee.f773b8"
+            ]
+        ]
+    },
+    {
+        "id": "25bca456.c59284",
+        "type": "debug",
+        "z": "c18c7fe2.7cb75",
+        "name": "SendToCandle",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 880,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "98eee874.1ae65",
+        "type": "inject",
+        "z": "c18c7fe2.7cb75",
+        "name": "Hot",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 90,
+        "y": 260,
+        "wires": [
+            [
+                "efe182b4.a4fa5"
+            ]
+        ]
+    },
+    {
+        "id": "5ab9b2df.5b1ccc",
+        "type": "function",
+        "z": "c18c7fe2.7cb75",
+        "name": "Set to 15",
+        "func": "msg.observation={}\nmsg.observation.temp = 15;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "32b9d27d.ec0776"
+            ]
+        ]
+    },
+    {
+        "id": "38cc073d.86574",
+        "type": "inject",
+        "z": "c18c7fe2.7cb75",
+        "name": "Warm",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 90,
+        "y": 300,
+        "wires": [
+            [
+                "5ab9b2df.5b1ccc"
+            ]
+        ]
+    },
+    {
+        "id": "507245eb.93df1c",
+        "type": "e-mail",
+        "z": "c18c7fe2.7cb75",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "snpkid01@gmail.com",
+        "dname": "",
+        "x": 860,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "fa11eef5.606f5",
+        "type": "function",
+        "z": "c18c7fe2.7cb75",
+        "name": "Create Email",
+        "func": "msg.observation={}\nmsg.observation.temp=5;\n\nif (msg.observation.temp <10)\n{\n    msg.topic = \"SNP00 temp update\"\n    msg.payload= \"Hello from Node-RED \"+\"\\nTemperature in Brantford is \"+msg.observation.temp \n\nnode.send(msg)\n}\n//return msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 540,
+        "wires": [
+            [
+                "507245eb.93df1c"
+            ]
+        ]
+    },
+    {
+        "id": "c70b7195.67c29",
+        "type": "inject",
+        "z": "c18c7fe2.7cb75",
+        "name": "Warm",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 370,
+        "y": 540,
+        "wires": [
+            [
+                "fa11eef5.606f5"
+            ]
+        ]
+    },
+    {
+        "id": "efe182b4.a4fa5",
+        "type": "function",
+        "z": "c18c7fe2.7cb75",
+        "name": "Set to 25",
+        "func": "msg.observation={}\nmsg.observation.temp = 25\nmsg.payload = 25;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 220,
+        "y": 260,
+        "wires": [
+            [
+                "32b9d27d.ec0776"
+            ]
+        ]
+    }
+]
